@@ -179,8 +179,10 @@ async def register_user(user: UserCreate):
         )
     
     hashed_password = get_password_hash(user.password)
+    user_dict = user.dict(exclude={"password"})
+    user_dict["id"] = str(uuid.uuid4())
     user_in_db = UserInDB(
-        **user.dict(exclude={"password"}),
+        **user_dict,
         hashed_password=hashed_password
     )
     
@@ -188,7 +190,7 @@ async def register_user(user: UserCreate):
     
     return User(**user_in_db.dict(exclude={"hashed_password"}))
 
-@api_router.post("/token", response_model=Token)
+@api_router.post("/token")
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = await authenticate_user(form_data.username, form_data.password)
     if not user:

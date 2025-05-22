@@ -145,6 +145,9 @@ class DoorDiscoveryAPITester:
         img.save(img_byte_arr, format='JPEG')
         img_byte_arr.seek(0)
         
+        url = f"{self.base_url}/api/doors"
+        print(f"Create Door URL: {url}")
+        
         # Prepare form data and files
         files = {
             'image': ('test_door.jpg', img_byte_arr, 'image/jpeg')
@@ -160,19 +163,42 @@ class DoorDiscoveryAPITester:
             'longitude': -74.0060
         }
         
-        success, response = self.run_test(
-            "Create Door",
-            "POST",
-            "doors",
-            200,
-            files=files,
-            form_data=form_data
-        )
-        
-        if success and 'id' in response:
-            self.test_door_id = response['id']
-            return True
-        return False
+        try:
+            headers = {}
+            if self.token:
+                headers['Authorization'] = f'Bearer {self.token}'
+            
+            self.tests_run += 1
+            print(f"\n🔍 Testing Create Door...")
+            
+            response = requests.post(
+                url,
+                headers=headers,
+                files=files,
+                data=form_data
+            )
+            
+            if response.status_code == 200:
+                self.tests_passed += 1
+                print(f"✅ Passed - Status: {response.status_code}")
+                response_data = response.json()
+                if 'id' in response_data:
+                    self.test_door_id = response_data['id']
+                    return True
+                else:
+                    print("❌ No door ID in response")
+            else:
+                print(f"❌ Failed - Expected 200, got {response.status_code}")
+                try:
+                    error_detail = response.json()
+                    print(f"Error: {error_detail}")
+                except:
+                    print(f"Response: {response.text}")
+            
+            return False
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False
 
     def test_get_doors(self):
         """Test getting all doors"""

@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { BrowserRouter, Routes, Route, Navigate, useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { BrowserRouter, Routes, Route, Navigate, useParams, useNavigate, Link } from "react-router-dom";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { ToastContainer, toast } from 'react-toastify';

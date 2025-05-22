@@ -1222,6 +1222,8 @@ const DoorDetail = () => {
   const navigate = useNavigate();
   const mapContainer = useRef(null);
   const map = useRef(null);
+  
+  console.log("Door ID from params:", id);
 
   useEffect(() => {
     const fetchDoorAndComments = async () => {

@@ -54,8 +54,16 @@ const AuthProvider = ({ children }) => {
       formData.append('username', email);
       formData.append('password', password);
 
-      const response = await axios.post(`${API}/token`, formData);
+      console.log("Attempting login with:", email);
+      
+      const response = await axios.post(`${API}/token`, formData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+      
       const { access_token } = response.data;
+      console.log("Login successful, token received");
       
       localStorage.setItem('token', access_token);
       setToken(access_token);

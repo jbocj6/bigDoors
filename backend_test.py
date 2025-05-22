@@ -85,23 +85,47 @@ class DoorDiscoveryAPITester:
     def test_login(self):
         """Test login and get token"""
         # For login, we need to use form data
+        url = f"{self.base_url}/api/token"
+        print(f"Login URL: {url}")
+        
+        # Use requests directly for form data
         form_data = {
             "username": self.user_email,
             "password": self.user_password
         }
         
-        success, response = self.run_test(
-            "User Login",
-            "POST",
-            "token",
-            200,
-            data=form_data
-        )
+        print(f"Attempting login with: {self.user_email}")
         
-        if success and 'access_token' in response:
-            self.token = response['access_token']
-            return True
-        return False
+        try:
+            response = requests.post(
+                url,
+                data=form_data,  # Use data instead of json for form submission
+                headers={"Content-Type": "application/x-www-form-urlencoded"}
+            )
+            
+            self.tests_run += 1
+            
+            if response.status_code == 200:
+                self.tests_passed += 1
+                print(f"✅ Passed - Status: {response.status_code}")
+                response_data = response.json()
+                if 'access_token' in response_data:
+                    self.token = response_data['access_token']
+                    return True
+                else:
+                    print("❌ No access token in response")
+            else:
+                print(f"❌ Failed - Expected 200, got {response.status_code}")
+                try:
+                    error_detail = response.json()
+                    print(f"Error: {error_detail}")
+                except:
+                    print(f"Response: {response.text}")
+            
+            return False
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False
 
     def test_get_current_user(self):
         """Test getting current user profile"""

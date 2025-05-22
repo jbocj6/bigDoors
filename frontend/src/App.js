@@ -432,7 +432,10 @@ const Home = () => {
             <div 
               key={door.id} 
               className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition cursor-pointer"
-              onClick={() => navigate(`/doors/${door.id}`)}
+              onClick={() => {
+                console.log("Door clicked, navigating to:", `/doors/${door.id}`);
+                navigate(`/doors/${door.id}`);
+              }}
             >
               <div className="h-48 overflow-hidden">
                 <img 
